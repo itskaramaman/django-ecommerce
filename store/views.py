@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import *
 
 
 def main(request):
@@ -9,7 +10,11 @@ def main(request):
     return render(request, "store/main.html", context)
 
 def store(request):
-    context = {}
+    '''
+    This function shows all the products listed on the store.
+    '''
+    products = Product.objects.all()
+    context = {"products": products}
     return render(request, "store/store.html", context)
 
 def checkout(request):
