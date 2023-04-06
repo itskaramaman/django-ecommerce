@@ -3,6 +3,7 @@
   <div class="col-lg-6">
     <div class="box-element" id="form-wrapper">
       <form id="form">
+        {% if not user.is_authenticated %}
         <div id="user-info">
           <div class="form-field">
             <input
@@ -23,8 +24,7 @@
             />
           </div>
         </div>
-
-        {% if shipping %}
+        {% endif %} {% if shipping %}
         <div id="shipping-info">
           <hr />
           <p>Shipping Information:</p>
@@ -83,6 +83,9 @@
     <br />
     <div class="box-element hidden" id="payment-info">
       <small>Paypal Options</small>
+      <button id="make-payment" class="btn btn-success btn-block">
+        Make Payment
+      </button>
     </div>
   </div>
   <div class="col-lg-6">
@@ -114,6 +117,8 @@
 </div>
 
 <script type="text/javascript">
+  var total = "{{total}}";
+  var shipping = "{{shipping}}";
   var form = document.getElementById("form");
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -121,6 +126,66 @@
     document.getElementById("form-button").classList.add("hidden");
     document.getElementById("payment-info").classList.remove("hidden");
   });
+
+  document
+    .getElementById("make-payment")
+    .addEventListener("click", function (e) {
+      e.preventDefault();
+      submitData();
+    });
+
+  function submitData() {
+    console.log("Submit Data");
+
+    var userFormData = {
+      name: null,
+      email: null,
+      total: total,
+    };
+
+    var shippingFormData = {
+      address: null,
+      city: null,
+      state: null,
+      zipcode: null,
+    };
+
+    if (shipping != "False") {
+      shippingFormData.address = form.address.value;
+      shippingFormData.city = form.city.value;
+      shippingFormData.state = form.state.value;
+      shippingFormData.zipcode = form.zipcode.value;
+    }
+
+    if (user == "AnonymousUser") {
+      userFormData.name = form.name.value;
+      userFormData.email = form.email.value;
+    }
+
+    console.log(shippingFormData);
+    console.log(userFormData);
+
+    var url = "/process-order/";
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({
+        userFormData: userFormData,
+        shippingFormData: shippingFormData,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        alert("Transaction Completed");
+        window.location.href = "{% url 'store' %}";
+      })
+      .catch((err) => console.log(err));
+  }
 </script>
 
 {% endblock content %}
