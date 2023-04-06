@@ -25,6 +25,14 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.name)
+    
+    @property
+    def imageˍurl(self):
+        try:
+            url = self.image.url
+        except:
+            url = ""
+        return url
 
     def save(self, *args, **kwargs):
         super().save()
@@ -49,7 +57,18 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.id)
+    
+    @property
+    def get_cart_total(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.get_total for item in orderitems])
+        return total
 
+    @property
+    def get_cart_items(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.quantity for item in orderitems])
+        return total
 
 class OrderItem(models.Model):
     """
@@ -62,6 +81,10 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.product.name)
+
+    @property
+    def get_total(self):
+        return self.quantity * self.product.price
   
 
 class ShippingAddress(models.Model):
