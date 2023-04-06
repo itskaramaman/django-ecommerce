@@ -32,15 +32,17 @@ def store(request):
     return render(request, "store/store.html", context)
 
 def checkout(request):
+    shipping = False
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         order_items = order.orderitem_set.all()
-    context = {'order_items': order_items, 'order': order}
+        shipping = order.shipping
+        
+    context = {'order_items': order_items, 'order': order, 'shipping': shipping}
     return render(request, "store/checkout.html", context)
 
 def cart(request):
-        
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
