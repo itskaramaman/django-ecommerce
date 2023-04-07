@@ -19,7 +19,7 @@ class Product(models.Model):
     Model for Produt on store
     """
     name = models.CharField(max_length=200, null=True)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
     digital = models.BooleanField(default=False)
     image = models.ImageField()
 
@@ -51,7 +51,7 @@ class Order(models.Model):
     Model for Order Info
     """
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
-    date_orderd = models.DateTimeField(auto_now_add=True)
+    date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=100, null=True)
 

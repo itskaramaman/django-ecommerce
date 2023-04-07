@@ -9,7 +9,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
     <script type="text/javascript">var user = "{{request.user}}";
 
-
+      var csrftoken = getToken('csrftoken');
+      var cart = JSON.parse(getCookie('cart'));
+      if(cart==undefined){
+        cart = {}
+        document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/";
+      }
+      console.log({'Cart': cart});
       function getToken(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -26,7 +32,20 @@
         return cookieValue;
       }
 
-      var csrftoken = getToken('csrftoken');
+    
+      function getCookie(name){
+        var cookieArr = document.cookie.split(";");
+
+        for(var i=0; i<cookieArr.length; i++){
+          var cookiePair = cookieArr[i].split("=");
+        }
+
+        if (name == cookiePair[0].trim()){
+          return decodeURIComponent(cookiePair[1]);
+        }
+
+        return null
+      }
 
   </script>
     <title>Django Ecommerce</title>
